@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard CreSer - PROY_001 - Casa HP</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #E5E4E1;
+            color: #2d2d2d;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(69, 119, 29, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo {
+            max-height: 60px;
+            max-width: 250px;
+        }
+
+        .header-info {
+            flex: 1;
+            padding-left: 20px;
+        }
+
+        .header-info h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            color: #45771D;
+        }
+
+        .header-info p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .header-right {
+            text-align: right;
+        }
+
+        .project-dates {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .project-dates strong {
+            color: #45771D;
+            font-weight: 600;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(69, 119, 29, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-left: 4px solid #45771D;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(69, 119, 29, 0.2);
+        }
+
+        .card-title {
+            font-size: 13px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .card-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #45771D;
+            margin-bottom: 8px;
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: #6B9B2A;
+        }
+
+        .progress-bar-container {
+            background: rgba(69, 119, 29, 0.1);
+            border-radius: 8px;
+            height: 8px;
+            margin-top: 12px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #45771D 0%, #8BB04B 100%);
+            border-radius: 8px;
+            transition: width 0.5s ease;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(69, 119, 29, 0.1);
+        }
+
+        .chart-card h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #45771D;
+        }
+
+        .rubros-list {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(69, 119, 29, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .rubro-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(69, 119, 29, 0.1);
+        }
+
+        .rubro-item:last-child {
+            border-bottom: none;
+        }
+
+        .rubro-info {
+            flex: 1;
+        }
+
+        .rubro-name {
+            font-size: 15px;
+            color: #2d2d2d;
+            margin-bottom: 8px;
+        }
+
+        .rubro-progress {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .rubro-progress-bar {
+            flex: 1;
+            background: rgba(69, 119, 29, 0.1);
+            border-radius: 6px;
+            height: 6px;
+            overflow: hidden;
+        }
+
+        .rubro-progress-fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.5s ease;
+        }
+
+        .rubro-percentage {
+            font-size: 13px;
+            color: #666;
+            min-width: 45px;
+            text-align: right;
+        }
+
+        .rubro-amounts {
+            text-align: right;
+            margin-left: 20px;
+        }
+
+        .rubro-spent {
+            font-size: 16px;
+            font-weight: 600;
+            color: #45771D;
+        }
+
+        .rubro-budget {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .status-completado {
+            background: rgba(69, 119, 29, 0.15);
+            color: #45771D;
+        }
+
+        .status-en-curso {
+            background: rgba(107, 155, 42, 0.15);
+            color: #6B9B2A;
+        }
+
+        .status-pendiente {
+            background: rgba(200, 200, 200, 0.3);
+            color: #666;
+        }
+
+        .timeline-table {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(69, 119, 29, 0.1);
+            overflow-x: auto;
+            margin-bottom: 30px;
+        }
+
+        .timeline-table h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #45771D;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: rgba(69, 119, 29, 0.05);
+        }
+
+        th {
+            padding: 12px;
+            text-align: left;
+            font-size: 13px;
+            color: #45771D;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px;
+            border-top: 1px solid rgba(69, 119, 29, 0.1);
+            font-size: 14px;
+        }
+
+        .amount-cell {
+            text-align: right;
+            font-weight: 600;
+        }
+
+        .positive {
+            color: #45771D;
+        }
+
+        .rubro-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(69, 119, 29, 0.1);
+            color: #45771D;
+            border-radius: 8px;
+            font-size: 12px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: #666;
+            font-size: 13px;
+        }
+
+        .gauge-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 968px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .header-right {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="data:image/png;base64,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" alt="CreSer" class="logo">
+            <div class="header-info">
+                <h1 id="projectName">Cargando proyecto...</h1>
+                <p>Dashboard de Inversión y Seguimiento</p>
+            </div>
+            <div class="header-right">
+                <div class="project-dates">
+                    <div><strong>Inicio:</strong> <span id="fechaInicio">-</span></div>
+                    <div><strong>Finalización:</strong> <span id="fechaFin">-</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="summary-cards">
+            <div class="card">
+                <div class="card-title">Total Comprometido</div>
+                <div class="card-value" id="totalComprometido">$0</div>
+                <div class="card-subtitle">Todo lo registrado en Pagos</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Total Pagado</div>
+                <div class="card-value" id="totalPagado">$0</div>
+                <div class="card-subtitle"><span id="porcentajePagado">0</span>% del total comprometido</div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="mainProgressBar" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Por Pagar</div>
+                <div class="card-value" id="totalPorPagar">$0</div>
+                <div class="card-subtitle">Gastos comprometidos pendientes</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Presupuesto Objetivo</div>
+                <div class="card-value" id="presupuestoObjetivo">-</div>
+                <div class="card-subtitle" id="estadoPresupuesto">-</div>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3>Grado de Avance del Proyecto</h3>
+                <div class="gauge-container">
+                    <canvas id="gaugeChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <h3>Evolución de Gastos Pagados</h3>
+                <canvas id="lineChart"></canvas>
+            </div>
+        </div>
+
+        <div class="rubros-list">
+            <h3>Detalle por Rubro</h3>
+            <div id="rubrosList"></div>
+        </div>
+
+        <div class="timeline-table">
+            <h3>Historial de Pagos</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Descripción</th>
+                        <th>Rubro</th>
+                        <th style="text-align: right;">Monto (ARS)</th>
+                        <th style="text-align: right;">Acumulado (ARS)</th>
+                    </tr>
+                </thead>
+                <tbody id="timelineBody">
+                </tbody>
+            </table>
+        </div>
+
+        <div class="timeline-table">
+            <h3>Gastos Pendientes de Pago</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Descripción</th>
+                        <th>Rubro</th>
+                        <th style="text-align: right;">Monto (ARS)</th>
+                    </tr>
+                </thead>
+                <tbody id="pendientesBody">
+                </tbody>
+            </table>
+        </div>
+
+        <div class="footer">
+            <div>CreSer - Desarrollos inmobiliarios al costo</div>
+            <div>Generado el 05/02/2026 22:59</div>
+        </div>
+    </div>
+
+    <script>
+        const projectData = {"proyecto": {"nombre": "PROY_001 - Casa HP", "fecha_inicio": "2025-01-01", "fecha_fin": "2026-01-01", "total_comprometido": 44874214.16, "total_pagado": 44874214.16, "total_por_pagar": 0, "porcentaje_pagado": 100.0, "valor_gastado_real": 87200000, "valor_presupuesto_objetivo": 90000000, "porcentaje_avance": 96.9}, "rubros": [{"nombre": "Mano de obra", "presupuesto": 24500000, "gastado": 24500000, "pendiente": 0, "porcentaje": 100.0}, {"nombre": "Materiales obra gruesa", "presupuesto": 10012708.7, "gastado": 10012708.7, "pendiente": 0.0, "porcentaje": 100.0}, {"nombre": "Proyecto", "presupuesto": 7441061, "gastado": 7441061, "pendiente": 0, "porcentaje": 100.0}, {"nombre": "Expensas", "presupuesto": 1872444.46, "gastado": 1872444.46, "pendiente": 0.0, "porcentaje": 100.0}, {"nombre": "Sanitarios", "presupuesto": 1100000, "gastado": 1100000, "pendiente": 0, "porcentaje": 100.0}, {"nombre": "Varios", "presupuesto": 30000, "gastado": 30000, "pendiente": 0, "porcentaje": 100.0}, {"nombre": "Fumigación", "presupuesto": 18000, "gastado": 18000, "pendiente": 0, "porcentaje": 100.0}, {"nombre": "Pase obra gruesa", "presupuesto": -100000, "gastado": -100000, "pendiente": 0, "porcentaje": 0}], "gastos_timeline": [{"fecha": "2025-12-01", "descripcion": "Expensas Diciembre", "monto": 157889.15, "acumulado": 157889.15, "rubro": "Expensas"}, {"fecha": "2025-12-02", "descripcion": "Honorarios Arq. Anticipo ", "monto": 1000000, "acumulado": 1157889.15, "rubro": "Proyecto"}, {"fecha": "2025-12-02", "descripcion": "Honorarios Arq. Cuota 1", "monto": 750000, "acumulado": 1907889.15, "rubro": "Proyecto"}, {"fecha": "2025-12-02", "descripcion": "Expensas  ", "monto": 330000, "acumulado": 2237889.15, "rubro": "Expensas"}, {"fecha": "2025-12-02", "descripcion": "Gestor", "monto": 429000, "acumulado": 2666889.15, "rubro": "Proyecto"}, {"fecha": "2025-12-02", "descripcion": "Media sombra", "monto": 107000, "acumulado": 2773889.15, "rubro": "Proyecto"}, {"fecha": "2025-12-02", "descripcion": "Honorarios Arq. Cuota 2 ", "monto": 750000, "acumulado": 3523889.15, "rubro": "Proyecto"}, {"fecha": "2025-12-02", "descripcion": "Luciano Arq.", "monto": 1205000, "acumulado": 4728889.15, "rubro": "Proyecto"}, {"fecha": "2025-12-02", "descripcion": "Hierro 6mm", "monto": 979274.87, "acumulado": 5708164.02, "rubro": "Materiales obra gruesa"}, {"fecha": "2025-12-02", "descripcion": "Hiero 8 mm", "monto": 548141.66, "acumulado": 6256305.68, "rubro": "Materiales obra gruesa"}, {"fecha": "2025-12-02", "descripcion": "Hierro 10 mm", "monto": 1586725.86, "acumulado": 7843031.53, "rubro": "Materiales obra gruesa"}, {"fecha": "2025-12-02", "descripcion": "Hierro 12 mm", "monto": 2282152.08, "acumulado": 10125183.61, "rubro": "Materiales obra gruesa"}, {"fecha": "2025-12-02", "descripcion": "Clavos 2", "monto": 88885.1, "acumulado": 10214068.71, "rubro": "Materiales obra gruesa"}, {"fecha": "2025-12-02", "descripcion": "Clavos 2 1/2", "monto": 86270.89, "acumulado": 10300339.59, "rubro": "Materiales obra gruesa"}, {"fecha": "2025-12-02", "descripcion": "Alambre", "monto": 113875.22, "acumulado": 10414214.82, "rubro": "Materiales obra gruesa"}, {"fecha": "2025-12-02", "descripcion": "Hierro aletado 6", "monto": 197338.72, "acumulado": 10611553.54, "rubro": "Materiales obra gruesa"}, {"fecha": "2025-12-02", "descripcion": "Hierro aletado 8", "monto": 538044.31, "acumulado": 11149597.85, "rubro": "Materiales obra gruesa"}, {"fecha": "2025-12-02", "descripcion": "Expensas", "monto": 331000, "acumulado": 11480597.85, "rubro": "Expensas"}, {"fecha": "2025-12-02", "descripcion": "Pago mano de obra", "monto": 1500000, "acumulado": 12980597.85, "rubro": "Mano de obra"}, {"fecha": "2025-12-13", "descripcion": "Pago mano de obra", "monto": 1500000, "acumulado": 14480597.85, "rubro": "Mano de obra"}, {"fecha": "2025-12-13", "descripcion": "Cemento Loma Negra", "monto": 776000, "acumulado": 15256597.85, "rubro": "Materiales obra gruesa"}, {"fecha": "2025-12-13", "descripcion": "Piedra x metro", "monto": 416000, "acumulado": 15672597.85, "rubro": "Materiales obra gruesa"}, {"fecha": "2025-12-13", "descripcion": "Arena x metro", "monto": 240000, "acumulado": 15912597.85, "rubro": "Materiales obra gruesa"}, {"fecha": "2025-12-13", "descripcion": "Honorarios arq. Municipal", "monto": 300000, "acumulado": 16212597.85, "rubro": "Proyecto"}, {"fecha": "2025-12-13", "descripcion": "Pago mano de obra", "monto": 1500000, "acumulado": 17712597.85, "rubro": "Mano de obra"}, {"fecha": "2025-12-13", "descripcion": "Gastos arquitecto", "monto": 174150, "acumulado": 17886747.85, "rubro": "Proyecto"}, {"fecha": "2025-12-13", "descripcion": "Pago mano de obra", "monto": 2000000, "acumulado": 19886747.85, "rubro": "Mano de obra"}, {"fecha": "2025-12-13", "descripcion": "Fumigación", "monto": 18000, "acumulado": 19904747.85, "rubro": "Fumigación"}, {"fecha": "2025-12-13", "descripcion": "Expensas", "monto": 328555.31, "acumulado": 20233303.16, "rubro": "Expensas"}, {"fecha": "2025-12-13", "descripcion": "Pago mano de obra", "monto": 1500000, "acumulado": 21733303.16, "rubro": "Mano de obra"}, {"fecha": "2025-12-13", "descripcion": "Derechos construccion", "monto": 771111, "acumulado": 22504414.16, "rubro": "Proyecto"}, {"fecha": "2025-12-13", "descripcion": "Colegio de Arq.", "monto": 322500, "acumulado": 22826914.16, "rubro": "Proyecto"}, {"fecha": "2025-12-13", "descripcion": "Planos arq.", "monto": 120000, "acumulado": 22946914.16, "rubro": "Proyecto"}, {"fecha": "2025-12-13", "descripcion": "Pago mano de obra", "monto": 1500000, "acumulado": 24446914.16, "rubro": "Mano de obra"}, {"fecha": "2025-12-13", "descripcion": "Colegio de Arq.", "monto": 1290000, "acumulado": 25736914.16, "rubro": "Proyecto"}, {"fecha": "2025-12-13", "descripcion": "Pase materiales 432", "monto": -100000, "acumulado": 25636914.16, "rubro": "Pase obra gruesa"}, {"fecha": "2025-12-13", "descripcion": "Municipalidad ", "monto": 187300, "acumulado": 25824214.16, "rubro": "Proyecto"}, {"fecha": "2025-12-13", "descripcion": "Pago mano de obra", "monto": 1500000, "acumulado": 27324214.16, "rubro": "Mano de obra"}, {"fecha": "2025-12-13", "descripcion": "Asado obra", "monto": 30000, "acumulado": 27354214.16, "rubro": "Varios"}, {"fecha": "2025-12-13", "descripcion": "Expensas", "monto": 725000, "acumulado": 28079214.16, "rubro": "Expensas"}, {"fecha": "2025-12-13", "descripcion": "Pago mano de obra", "monto": 1500000, "acumulado": 29579214.16, "rubro": "Mano de obra"}, {"fecha": "2025-12-13", "descripcion": "Honorarios vique", "monto": 35000, "acumulado": 29614214.16, "rubro": "Proyecto"}, {"fecha": "2026-01-04", "descripcion": "Pago mano de obra", "monto": 1500000, "acumulado": 31114214.16, "rubro": "Mano de obra"}, {"fecha": "2026-01-04", "descripcion": "Pago mano de obra", "monto": 1500000, "acumulado": 32614214.16, "rubro": "Mano de obra"}, {"fecha": "2026-01-04", "descripcion": "Viguetas y ladrillos telgopor", "monto": 2160000, "acumulado": 34774214.16, "rubro": "Materiales obra gruesa"}, {"fecha": "2026-01-04", "descripcion": "Pago mano de obra", "monto": 1500000, "acumulado": 36274214.16, "rubro": "Mano de obra"}, {"fecha": "2026-01-04", "descripcion": "Adelanto mano de obra", "monto": 6000000, "acumulado": 42274214.16, "rubro": "Mano de obra"}, {"fecha": "2026-01-04", "descripcion": "Pago mano de obra", "monto": 1500000, "acumulado": 43774214.16, "rubro": "Mano de obra"}, {"fecha": "2026-01-04", "descripcion": "Sanitarios", "monto": 1100000, "acumulado": 44874214.16, "rubro": "Sanitarios"}], "gastos_pendientes": []};
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('es-AR', {
+                style: 'currency',
+                currency: 'ARS',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(value);
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('es-ES', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
+
+        function getStatusColor(porcentaje) {
+            if (porcentaje === 100) return '#45771D';
+            if (porcentaje >= 50) return '#6B9B2A';
+            return '#999';
+        }
+
+        function getStatusBadge(porcentaje) {
+            if (porcentaje === 100) return '<span class="status-badge status-completado">Completado</span>';
+            if (porcentaje > 0) return '<span class="status-badge status-en-curso">En Curso</span>';
+            return '<span class="status-badge status-pendiente">Pendiente</span>';
+        }
+
+        document.getElementById('projectName').textContent = projectData.proyecto.nombre;
+        document.getElementById('fechaInicio').textContent = formatDate(projectData.proyecto.fecha_inicio);
+        document.getElementById('fechaFin').textContent = formatDate(projectData.proyecto.fecha_fin);
+
+        document.getElementById('totalComprometido').textContent = formatCurrency(projectData.proyecto.total_comprometido);
+        document.getElementById('totalPagado').textContent = formatCurrency(projectData.proyecto.total_pagado);
+        document.getElementById('totalPorPagar').textContent = formatCurrency(projectData.proyecto.total_por_pagar);
+        document.getElementById('porcentajePagado').textContent = projectData.proyecto.porcentaje_pagado;
+        document.getElementById('mainProgressBar').style.width = projectData.proyecto.porcentaje_pagado + '%';
+        
+        const presupuestoObjetivo = projectData.proyecto.valor_presupuesto_objetivo;
+        const diferencia = presupuestoObjetivo - projectData.proyecto.total_comprometido;
+        document.getElementById('presupuestoObjetivo').textContent = formatCurrency(presupuestoObjetivo);
+        const estadoPresupuesto = document.getElementById('estadoPresupuesto');
+        if (diferencia >= 0) {
+            estadoPresupuesto.textContent = `Dentro del presupuesto (+${formatCurrency(diferencia).replace('$', '')})`;
+            estadoPresupuesto.style.color = '#45771D';
+        } else {
+            estadoPresupuesto.textContent = `Sobre presupuesto (${formatCurrency(Math.abs(diferencia)).replace('$', '')})`;
+            estadoPresupuesto.style.color = '#ff6b6b';
+        }
+
+        const rubrosList = document.getElementById('rubrosList');
+        projectData.rubros.forEach(rubro => {
+            const rubroDiv = document.createElement('div');
+            rubroDiv.className = 'rubro-item';
+            rubroDiv.innerHTML = `
+                <div class="rubro-info">
+                    <div class="rubro-name">${rubro.nombre}</div>
+                    <div class="rubro-progress">
+                        <div class="rubro-progress-bar">
+                            <div class="rubro-progress-fill" style="width: ${rubro.porcentaje}%; background: ${getStatusColor(rubro.porcentaje)};"></div>
+                        </div>
+                        <div class="rubro-percentage">${rubro.porcentaje}%</div>
+                    </div>
+                </div>
+                <div class="rubro-amounts">
+                    <div class="rubro-spent">${formatCurrency(rubro.gastado)}</div>
+                    <div class="rubro-budget">de ${formatCurrency(rubro.presupuesto)}</div>
+                    ${getStatusBadge(rubro.porcentaje)}
+                </div>
+            `;
+            rubrosList.appendChild(rubroDiv);
+        });
+
+        const timelineBody = document.getElementById('timelineBody');
+        projectData.gastos_timeline.forEach(gasto => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${formatDate(gasto.fecha)}</td>
+                <td>${gasto.descripcion}</td>
+                <td><span class="rubro-tag">${gasto.rubro}</span></td>
+                <td class="amount-cell positive">${formatCurrency(gasto.monto)}</td>
+                <td class="amount-cell">${formatCurrency(gasto.acumulado)}</td>
+            `;
+            timelineBody.appendChild(row);
+        });
+
+        const pendientesBody = document.getElementById('pendientesBody');
+        if (projectData.gastos_pendientes && projectData.gastos_pendientes.length > 0) {
+            projectData.gastos_pendientes.forEach(gasto => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${gasto.fecha !== 'Sin fecha' ? formatDate(gasto.fecha) : 'Sin fecha'}</td>
+                    <td>${gasto.descripcion}</td>
+                    <td><span class="rubro-tag">${gasto.rubro}</span></td>
+                    <td class="amount-cell" style="color: #666;">${formatCurrency(gasto.monto)}</td>
+                `;
+                pendientesBody.appendChild(row);
+            });
+        } else {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td colspan="4" style="text-align: center; color: #999; padding: 20px;">No hay gastos pendientes de pago</td>`;
+            pendientesBody.appendChild(row);
+        }
+
+        Chart.defaults.color = '#666';
+        Chart.defaults.borderColor = 'rgba(69, 119, 29, 0.1)';
+
+        // Gráfico Gauge (medidor de avance)
+        const porcentajeAvance = projectData.proyecto.porcentaje_avance || 0;
+        
+        const gaugeCtx = document.getElementById('gaugeChart').getContext('2d');
+        const gaugeChart = new Chart(gaugeCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Avance', 'Pendiente'],
+                datasets: [{
+                    data: [porcentajeAvance, 100 - porcentajeAvance],
+                    backgroundColor: ['#45771D', 'rgba(200, 200, 200, 0.3)'],
+                    borderWidth: 0,
+                    circumference: 180,
+                    rotation: 270
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                cutout: '75%',
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        enabled: false
+                    }
+                }
+            },
+            plugins: [{
+                id: 'gaugeText',
+                afterDraw: (chart) => {
+                    const ctx = chart.ctx;
+                    const centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
+                    const centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
+                    
+                    ctx.save();
+                    ctx.font = 'bold 48px Arial';
+                    ctx.fillStyle = '#45771D';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(porcentajeAvance.toFixed(1) + '%', centerX, centerY - 10);
+                    
+                    ctx.font = '14px Arial';
+                    ctx.fillStyle = '#666';
+                    ctx.fillText('del presupuesto objetivo', centerX, centerY + 25);
+                    
+                    ctx.restore();
+                }
+            }]
+        });
+
+        const timelineLabels = projectData.gastos_timeline.map(g => formatDate(g.fecha));
+        const timelineAcumulado = projectData.gastos_timeline.map(g => g.acumulado);
+
+        const lineCtx = document.getElementById('lineChart').getContext('2d');
+        const lineChart = new Chart(lineCtx, {
+            type: 'line',
+            data: {
+                labels: timelineLabels.length > 0 ? timelineLabels : ['Sin datos'],
+                datasets: [{
+                    label: 'Gasto Acumulado (Pagado)',
+                    data: timelineAcumulado.length > 0 ? timelineAcumulado : [0],
+                    borderColor: '#45771D',
+                    backgroundColor: 'rgba(69, 119, 29, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    pointBackgroundColor: '#45771D'
+                }, {
+                    label: 'Total Comprometido',
+                    data: Array(timelineLabels.length || 1).fill(projectData.proyecto.total_comprometido),
+                    borderColor: '#6B9B2A',
+                    borderDash: [5, 5],
+                    tension: 0,
+                    fill: false,
+                    pointRadius: 0
+                }, {
+                    label: 'Presupuesto Objetivo',
+                    data: Array(timelineLabels.length || 1).fill(presupuestoObjetivo),
+                    borderColor: '#ff6b6b',
+                    borderDash: [10, 5],
+                    tension: 0,
+                    fill: false,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 15,
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.dataset.label}: ${formatCurrency(context.parsed.y)}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return formatCurrency(value);
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(69, 119, 29, 0.1)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
