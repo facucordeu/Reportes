@@ -358,7 +358,7 @@
 
         <div class="summary-cards">
             <div class="card">
-                <div class="card-title">Total Comprometido</div>
+                <div class="card-title">Total INVERTIDO</div>
                 <div class="card-value" id="totalComprometido">$0</div>
                 <div class="card-subtitle">Todo lo registrado en Pagos</div>
             </div>
@@ -375,11 +375,11 @@
             <div class="card">
                 <div class="card-title">Por Pagar</div>
                 <div class="card-value" id="totalPorPagar">$0</div>
-                <div class="card-subtitle">Gastos comprometidos pendientes</div>
+                <div class="card-subtitle">Gastos Pendientes de Pago</div>
             </div>
 
             <div class="card">
-                <div class="card-title">Presupuesto Objetivo Mano de Obra</div>
+                <div class="card-title">Presupuesto total Mano de Obra</div>
                 <div class="card-value" id="presupuestoObjetivo">-</div>
                 <div class="card-subtitle" id="estadoPresupuesto">-</div>
             </div>
@@ -439,7 +439,7 @@
 
         <div class="footer">
             <div>CreSer - Desarrollos inmobiliarios al costo</div>
-            <div>Generado el 22/02/2026 14:44</div>
+            <div>Generado el 24/03/2026 13:30</div>
         </div>
     </div>
 
@@ -491,7 +491,7 @@
         document.getElementById('presupuestoObjetivo').textContent = formatCurrency(presupuestoObjetivo);
         const estadoPresupuesto = document.getElementById('estadoPresupuesto');
         if (diferencia >= 0) {
-            estadoPresupuesto.textContent = `Dentro del presupuesto (+${formatCurrency(diferencia).replace('$', '')})`;
+            estadoPresupuesto.textContent = `A saldar (+${formatCurrency(diferencia).replace('$', '')})`;
             estadoPresupuesto.style.color = '#45771D';
         } else {
             estadoPresupuesto.textContent = `Sobre presupuesto (${formatCurrency(Math.abs(diferencia)).replace('$', '')})`;
